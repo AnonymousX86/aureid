@@ -65,6 +65,9 @@ def main():
                 )
             ))
 
+        else:
+            rich_log.info('But that command does not exists')
+
     events.run()
 
 
