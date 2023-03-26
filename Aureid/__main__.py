@@ -1,8 +1,10 @@
 # -*- coding: utf-8
 from datetime import datetime, timezone
+from json import loads as json_loads
 from logging import basicConfig, INFO, getLogger
 
 from nextguild import Client, Events, Message, Embed
+from requests import get as requests_get
 from rich.logging import RichHandler
 
 from Aureid.api_calls.members import get_member
@@ -45,7 +47,23 @@ def main():
                 )
             )
 
+        # "chuck" command
+        if cmd.startswith('chuck'):
+            req = requests_get('https://api.chucknorris.io/jokes/random')
+            if not req.ok:
+                client.send_message(message.channelId, embed=Embed(
+                    title='Oops!',
+                    description='API unavailable'
+                ))
+                return
+            res = json_loads(req.content)
+            client.send_message(message.channelId, embed=Embed(
+                description=res.get('value'),
+                thumbnail=res.get('icon_url').replace(
+                    'assets.chucknorris.host',
+                    'api.chucknorris.io'
                 )
+            ))
 
     events.run()
 
