@@ -70,6 +70,35 @@ def main():
                 )
             ))
 
+        # "dadjoke" command
+        if cmd.startswith('dadjoke'):
+            req = requests_get(
+                'https://reddit.com/r/dadjokes/random.json?limit=1&t=month',
+                headers={
+                    'User-Agent': 'Aureid'
+                }
+            )
+            if not req.ok:
+                client.send_message(
+                    message.channelId,
+                    embed=api_unavailable_embed
+                )
+                return
+            res = json_loads(req.content)
+            data = res[0]['data']['children'][0]['data']
+            client.send_message(
+                message.channelId,
+                embed=Embed(
+                    description='**{}**\n\n{}\n\n*{}*'.format(
+                        data.get('title', '').replace('\n', ''),
+                        data.get('selftext', '').replace('\n', ''),
+                        '[Upvote]({})'.format(data.get('url'))
+                    ),
+                    thumbnail='https://www.redditstatic.com/desktop2x/img/'
+                              'favicon/favicon-96x96.png'
+                )
+            )
+
         else:
             rich_log.info('But that command does not exists')
 
