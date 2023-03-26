@@ -23,7 +23,7 @@ def main():
     async def bot_command(message: Message):
         # Check if it's a command
         if (cmd := message.content).startswith(PREFIX):
-            cmd = cmd[1::]
+            cmd = cmd[len(PREFIX)::]
             author = get_member(message.guildId, message.authorId)
             rich_log.info('"{}" issued "{}" command'.format(author['user']['name'], cmd))
             # "ping" command
