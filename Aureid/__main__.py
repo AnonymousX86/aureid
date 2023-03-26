@@ -17,6 +17,11 @@ def main():
     client = Client(BOT_TOKEN)
     events = Events(client)
 
+    api_unavailable_embed = Embed(
+        title='Oops!',
+        description='API unavailable'
+    )
+
     @events.on_ready
     async def on_ready():
         rich_log.info('Ready!')
@@ -51,10 +56,10 @@ def main():
         if cmd.startswith('chuck'):
             req = requests_get('https://api.chucknorris.io/jokes/random')
             if not req.ok:
-                client.send_message(message.channelId, embed=Embed(
-                    title='Oops!',
-                    description='API unavailable'
-                ))
+                client.send_message(
+                    message.channelId,
+                    embed=api_unavailable_embed
+                )
                 return
             res = json_loads(req.content)
             client.send_message(message.channelId, embed=Embed(
