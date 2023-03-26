@@ -25,16 +25,22 @@ def main():
         if (cmd := message.content).startswith(PREFIX):
             cmd = cmd[len(PREFIX)::]
             author = get_member(message.guildId, message.authorId)
-            rich_log.info('"{}" issued "{}" command'.format(author['user']['name'], cmd))
+            rich_log.info('"{}" issued "{}" command'.format(
+                author['user']['name'], cmd)
+            )
+
             # "ping" command
             if cmd.startswith('ping'):
                 og_message = get_message(message.channelId, message.messageId)
-                msg_timedelta = datetime.now(tz=timezone.utc) - datetime.fromisoformat(og_message['createdAt'])
+                msg_timedelta = \
+                    datetime.now(tz=timezone.utc) \
+                    - datetime.fromisoformat(og_message['createdAt'])
                 client.send_message(
                     message.channelId,
                     embed=Embed(
                         title=':table_tennis_paddle_and_ball: Pong!',
-                        description=f'Response took {msg_timedelta.microseconds // 1000}ms'
+                        description=f'Response took '
+                                    f'{msg_timedelta.microseconds // 1000}ms'
                     )
                 )
 
