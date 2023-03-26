@@ -22,26 +22,29 @@ def main():
     @events.on_message
     async def bot_command(message: Message):
         # Check if it's a command
-        if (cmd := message.content).startswith(PREFIX):
-            cmd = cmd[len(PREFIX)::]
-            author = get_member(message.guildId, message.authorId)
-            rich_log.info('"{}" issued "{}" command'.format(
-                author['user']['name'], cmd)
+        if not (cmd := message.content).startswith(PREFIX):
+            return
+        cmd = cmd[len(PREFIX)::]
+        author = get_member(message.guildId, message.authorId)
+        rich_log.info('"{}" issued "{}" command'.format(
+            author['user']['name'], cmd)
+        )
+
+        # "ping" command
+        if cmd.startswith('ping'):
+            og_message = get_message(message.channelId, message.messageId)
+            msg_timedelta = \
+                datetime.now(tz=timezone.utc) \
+                - datetime.fromisoformat(og_message['createdAt'])
+            client.send_message(
+                message.channelId,
+                embed=Embed(
+                    title=':table_tennis_paddle_and_ball: Pong!',
+                    description=f'Response took '
+                                f'{msg_timedelta.microseconds // 1000}ms'
+                )
             )
 
-            # "ping" command
-            if cmd.startswith('ping'):
-                og_message = get_message(message.channelId, message.messageId)
-                msg_timedelta = \
-                    datetime.now(tz=timezone.utc) \
-                    - datetime.fromisoformat(og_message['createdAt'])
-                client.send_message(
-                    message.channelId,
-                    embed=Embed(
-                        title=':table_tennis_paddle_and_ball: Pong!',
-                        description=f'Response took '
-                                    f'{msg_timedelta.microseconds // 1000}ms'
-                    )
                 )
 
     events.run()
